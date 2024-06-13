@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Table from '../Table/Table';
 import Controls from '../Controls/Controls';
+import Graph from '../Graph/Graph';
 import './App.css';
 import bananasData from '../../data/bananas';
+import { getSortFunction } from '../../utils/GetSortFunction';
 
 const App = () => {
   const [showTable, setShowTable] = useState(false);
@@ -16,7 +18,8 @@ const App = () => {
 
   useEffect(() => {
     applyFilter();
-  }, [selectedCountry, sizeOrder, weightOrder, currentPage, paginationEnabled]);
+    setCurrentPage(1);
+  }, [selectedCountry, sizeOrder, weightOrder, paginationEnabled]);
 
   const toggleTable = () => {
     setShowTable(!showTable);
@@ -29,12 +32,20 @@ const App = () => {
       data = data.filter(d => d.Country === selectedCountry);
     }
 
+    let sizeSortFunction = getSortFunction("Size", sizeOrder, (a, b) => [a, b]);
+    let weightSortFunction = getSortFunction("Weight", weightOrder, (a, b) => [a, b]);
+
     if (sizeOrder !== "none") {
-      data.sort((a, b) => sizeOrder === "ascending" ? a.Size - b.Size : b.Size - a.Size);
+      if (sizeSortFunction) {
+        data.sort(sizeSortFunction);
+      }
     }
 
+    // Сортировка по весу
     if (weightOrder !== "none") {
-      data.sort((a, b) => weightOrder === "ascending" ? a.Weight - b.Weight : b.Weight - a.Weight);
+      if (weightSortFunction) {
+        data.sort(weightSortFunction);
+      }
     }
 
     setFilteredData(data);
@@ -58,6 +69,7 @@ const App = () => {
             setPaginationEnabled={setPaginationEnabled}
             paginationEnabled={paginationEnabled}
         />
+        <Graph data={bananasData} />
         {showTable && (paginationEnabled ? (
             <Table
                 data={filteredData}

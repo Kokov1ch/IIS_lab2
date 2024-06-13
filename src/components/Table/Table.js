@@ -1,11 +1,9 @@
 import React from 'react';
 import TableHead from './TableHead/TableHead';
 import TableBody from './TableBody/TableBody';
-import './Table.css'
+import './Table.css';
+
 const Table = ({ data, currentPage, itemsPerPage, paginate, paginationEnabled }) => {
-    if (!Array.isArray(data) || data.length === 0) {
-        return <p>Нет данных для текущего фильтра</p>;
-    }
 
     if (!paginationEnabled) {
         return (
@@ -58,7 +56,7 @@ const Table = ({ data, currentPage, itemsPerPage, paginate, paginationEnabled })
                     {displayPages.map((number, index) => (
                         <button
                             key={index}
-                            onClick={() => number !== '...' && paginate(number)}
+                            onClick={() => paginate(number)}
                             className={currentPage === number ? 'active' : ''}
                         >
                             {number}
